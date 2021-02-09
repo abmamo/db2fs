@@ -1,0 +1,31 @@
+# data I/O + conversion
+pandas==1.1.5
+# progress
+tqdm==4.55.0
+# mock db schema generation
+sqlalchemy==1.3.22
+# parquet conversion
+pyarrow==3.0.0
+# excel conversion
+xlrd==2.0.1
+# python db drivers
+psycopg2-binary==2.8.6
+pymysql==1.0.2
+# env management
+python-dotenv==0.15.0
+# azure storage
+azure-storage-blob==12.5.0
+# gcp 
+google-cloud-storage==1.35.0
+# aws
+boto3==1.16.63
+# testing
+pytest==6.2.2
+# coverage
+pytest-cov==2.11.1
+# mock data generator
+mock @ https://github.com/abmamo/mock/archive/v0.0.1.tar.gz
+# mock database generator
+fastdb @ https://github.com/abmamo/fastdb/archive/v0.0.1.tar.gz
+# db populateion
+populate @ https://github.com/abmamo/populate/archive/v0.0.1.tar.gz

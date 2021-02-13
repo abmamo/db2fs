@@ -6,6 +6,8 @@ from db2fs.connectors.gcp import GCPStorageMiddleware
 from db2fs.shared import IOFunctions
 # multi processing / batch processing
 import multiprocessing as mp
+# path
+from pathlib import Path
 # pandas
 import pandas as pd
 # io
@@ -108,7 +110,33 @@ class DatabaseExtractor(IOFunctions, RDBMiddleware, GCPStorageMiddleware):
                         df.to_csv(out_file, header=False)
                     # free memory
                     del df
-            return True
+            return local_file_path
+    
+    def table2other(self, table_name, file_type=".json", file_name=None):
+        """
+            convert a single table to a given file type
+
+            params:
+                - table_name: name of table to download
+                - file_type: file to convert to table
+                - file_name: name of file
+        """
+        # download table 2 csv
+        local_csv_path = self.table2csv(table_name = table_name, file_name = file_name)
+        # convert csv to specified file type
+        if file_type == ".json":
+            # convert csv to json
+            df = pd.read_csv(local_csv_path)
+            # create json path
+            local_json_path = Path(local_csv_path)
+            # update extension
+            local_json_path.rename(local_json_path.with_suffix(file_type))
+            # write to json
+            df.to_json(local_json_path)
+            # delete csv
+            os.remove(local_csv_path)
+            # return json file path
+            return local_json_path
         
     def db2csv(self):
         # get all tables
@@ -119,5 +147,17 @@ class DatabaseExtractor(IOFunctions, RDBMiddleware, GCPStorageMiddleware):
         pool = mp.Pool(processes=pool_size)
         # start download function
         download_status = [pool.apply(self.table2csv, args=(table_name,)) for table_name in all_tables]
+        # return
+        return download_status
+
+    def db2other(self, file_type=".json"):
+        # get all tables
+        all_tables = self.get_tables()
+        # get number of cpus available
+        pool_size = mp.cpu_count()
+        # create worker pool
+        pool = mp.Pool(processes=pool_size)
+        # start download function
+        download_status = [pool.apply(self.table2other, args=(table_name, file_type,)) for table_name in all_tables]
         # return
         return download_status

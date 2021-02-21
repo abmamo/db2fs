@@ -52,29 +52,16 @@ class DatabaseExtractor(IOFunctions, RDBMiddleware, GCPStorageMiddleware):
             download_dir = os.path.dirname(os.path.realpath(__file__))
             # create dir using download dir name
             self.download_dir_path = self.create_dir(os.path.join(download_dir, self.download_dir_name))
-        # create local file name
-        if ".csv" in table_name:
-            # if file name specified
-            if file_name is not None:
-                # create local file path just using file name
-                # / no extension
-                local_file_path = os.path.join(self.download_dir_path, file_name + ".csv")
-            # if file name not specified use name of table
-            else:
-                # create local file path just using file name
-                # / no extension
-                local_file_path = os.path.join(self.download_dir_path, table_name)
+        # if file name specified
+        if file_name is not None:
+            # create local file path just using file name
+            # / no extension
+            local_file_path = os.path.join(self.download_dir_path, file_name + ".csv")
+        # if file name not specified use name of table
         else:
-            # if file name specified
-            if file_name is not None:
-                # create local file path just using file name
-                # / no extension
-                local_file_path = os.path.join(self.download_dir_path, file_name + ".csv")
-            # if file name not specified use name of table
-            else:
-                # create local file path just using file name
-                # / no extension
-                local_file_path = os.path.join(self.download_dir_path, table_name + ".csv")
+            # create local file path just using file name
+            # / no extension
+            local_file_path = os.path.join(self.download_dir_path, table_name + ".csv")
         # raw sql select statement for different engines
         # postgres
         if self.connection_info["engine"] == "pg":
@@ -125,7 +112,7 @@ class DatabaseExtractor(IOFunctions, RDBMiddleware, GCPStorageMiddleware):
         local_csv_path = self.table2csv(table_name = table_name, file_name = file_name)
         # convert csv to specified file type
         if file_type == ".json":
-            # convert csv to json
+            # read csv into df
             df = pd.read_csv(local_csv_path)
             # create json path
             local_json_path = Path(local_csv_path)
@@ -137,6 +124,21 @@ class DatabaseExtractor(IOFunctions, RDBMiddleware, GCPStorageMiddleware):
             os.remove(local_csv_path)
             # return json file path
             return local_json_path
+        elif file_type == ".parquet":
+            # read csv into df
+            df = pd.read_csv(local_csv_path)
+            # create parquet path
+            local_parquet_path = Path(local_csv_path)
+            # update extension
+            local_parquet_path.rename(local_parquet_path.with_suffix(file_type))
+            # write to json
+            df.to_parquet(local_parquet_path)
+            # delete csv
+            os.remove(local_csv_path)
+            # return parquet file path
+            return local_parquet_path
+            
+
         
     def db2csv(self):
         # get all tables

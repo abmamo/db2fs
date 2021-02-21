@@ -38,12 +38,8 @@ def test_db2fs_table2csv_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_t
     # run extraction to files
     db_ext.table2csv(table_name=table_name)
     # build local file path
-    if "csv" in table_name:
-        table_name = table_name
-    else:
-        table_name = table_name + ".csv"
     # add file name to data dir
-    local_file_path = test_download_dir_psql.joinpath(table_name)
+    local_file_path = test_download_dir_psql.joinpath(table_name + ".csv")
     # assert file exists in download dir
     assert local_file_path.exists()
 
@@ -61,12 +57,7 @@ def test_db2fs_db2csv_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_tabl
     db_ext.db2csv()
     # assert all files exist
     for table_name in mock_psql_table_names:
-        # assert file exists in download dir
-        if "csv" in table_name:
-            table_name = table_name
-        else:
-            table_name = table_name + ".csv"
         # build local file path
-        local_file_path = test_download_dir_psql.joinpath(table_name)
+        local_file_path = test_download_dir_psql.joinpath(table_name + ".csv")
         # assert file exists
         assert local_file_path.exists()

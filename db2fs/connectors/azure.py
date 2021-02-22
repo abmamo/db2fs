@@ -5,6 +5,7 @@ from azure.storage.blob import BlobServiceClient
 from azure.core.exceptions import ResourceNotFoundError
 # system
 import os
+import glob
 # path
 from pathlib import Path
 # config logger
@@ -89,7 +90,7 @@ class AzureStorageMiddleware:
             params:
                 - container_name: uniqueu name of Azure Storage container
                                   we want to upload to
-                - file_path: local location of file
+                - local_file_path: local location of file
         """
         # if not connected don't run
         if not self.azure_storage_connected:
@@ -111,14 +112,14 @@ class AzureStorageMiddleware:
             # init blob client
             blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=key)
             # read file
-            with open(file_path, "rb") as upload_file:
+            with open(local_file_path, "rb") as upload_file:
                 # upload file
                 blob_client.upload_blob(upload_file)
         except Exception as err:
             # log
             logger.error(
                 "upload file: %s failed with err: %s" % (
-                    file_path,
+                    local_file_path,
                     str(err)
                 )
             )

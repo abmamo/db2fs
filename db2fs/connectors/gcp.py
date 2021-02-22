@@ -8,6 +8,7 @@ from google.oauth2 import service_account
 import json
 # os
 import os
+import glob
 # config logger
 logger = logging.getLogger(__name__)
 
@@ -137,7 +138,7 @@ class GCPStorageMiddleware:
         blob.upload_from_filename(local_file_path)
         print(
             "file {} uploaded to {}.".format(
-                local_file_path, destination_blob_name
+                local_file_path, key
             )
         )
     

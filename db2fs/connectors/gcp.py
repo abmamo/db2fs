@@ -109,7 +109,7 @@ class GCPStorageMiddleware:
         # return name of blobs
         return [blob.name for blob in blobs]
 
-    def upload_file_bucket(self, bucket_name, local_file_path, destination_blob_name=None):
+    def upload_bucket_file(self, bucket_name, local_file_path, key=None, prefix=None):
         """
             upload file to a GCP Storage bucket
         """
@@ -124,11 +124,15 @@ class GCPStorageMiddleware:
             # exit
             return
         # get destination blob name from local dir path
-        if destination_blob_name is None:
+        if key is None:
             # get name of file locally
-            destination_blob_name = os.path.basename(local_file_path)
+            key = os.path.basename(local_file_path)
+        # if prefix is specified
+        if prefix is not None:
+            # update key
+            key = os.path.join(prefix, key)
         # create blob with name
-        blob = bucket.blob(destination_blob_name)
+        blob = bucket.blob(key)
         # upload local file to blob
         blob.upload_from_filename(local_file_path)
         print(
@@ -137,8 +141,17 @@ class GCPStorageMiddleware:
             )
         )
     
-    def upload_bucket_dir(self, bucket_name, local_dir_path):
-        pass
+    def upload_bucket_dir(self, bucket_name, local_dir_path, prefix=None):
+        # get all files in dir
+        all_files = glob.glob(os.path.join(local_dir_path, "*.*"))
+        # iterate through files and upload
+        for file_path in all_files:
+            # upload file
+            self.upload_bucket_file(
+                bucket_name=bucket_name,
+                local_file_path=file_path,
+                prefix=prefix
+            )
 
     def download_bucket_file(self, bucket_name, file_name, download_dir):
         """

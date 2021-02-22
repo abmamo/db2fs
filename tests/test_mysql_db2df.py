@@ -111,5 +111,22 @@ def test_db2fs_db2json_mysql(mock_mysql_dsn, test_download_dir_mysql, mock_mysql
         local_file_path = test_download_dir_mysql.joinpath(table_name)
         # assert file exists in download dir
         assert local_file_path.exists()
+
+def test_db2fs_db2parquet_mysql(mock_mysql_dsn, test_download_dir_mysql, mock_mysql_table_names):
+    # init class
+    db_ext = DatabaseExtractor(
+        connection_info=mock_mysql_dsn,
+        download_dir_path=test_download_dir_mysql
+    )
+    # run extraction to files
+    db_ext.db2other(file_type=".parquet")
+    # assert all files exist
+    for table_name in mock_mysql_table_names:
+        # build local file name
+        table_name = table_name + ".parquet"
+        # build local file path
+        local_file_path = test_download_dir_mysql.joinpath(table_name)
+        # assert file exists in download dir
+        assert local_file_path.exists()
 """
 """

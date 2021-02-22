@@ -43,6 +43,44 @@ def test_db2fs_table2csv_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_t
     # assert file exists in download dir
     assert local_file_path.exists()
 
+def test_db2fs_table2json_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_table_names):
+    """
+        test table 2 csv extractions
+    """
+    # init class
+    db_ext = DatabaseExtractor(
+        connection_info=mock_psql_dsn,
+        download_dir_path=test_download_dir_psql
+    )
+    # table name
+    table_name = mock_psql_table_names[0]
+    # run extraction to files
+    db_ext.table2other(table_name=table_name)
+    # build local file path
+    # add file name to data dir
+    local_file_path = test_download_dir_psql.joinpath(table_name + ".json")
+    # assert file exists in download dir
+    assert local_file_path.exists()
+
+def test_db2fs_table2parquet_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_table_names):
+    """
+        test table 2 csv extractions
+    """
+    # init class
+    db_ext = DatabaseExtractor(
+        connection_info=mock_psql_dsn,
+        download_dir_path=test_download_dir_psql
+    )
+    # table name
+    table_name = mock_psql_table_names[0]
+    # run extraction to files
+    db_ext.table2other(table_name=table_name, file_type=".parquet")
+    # build local file path
+    # add file name to data dir
+    local_file_path = test_download_dir_psql.joinpath(table_name + ".parquet")
+    # assert file exists in download dir
+    assert local_file_path.exists()
+
 
 def test_db2fs_db2csv_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_table_names):
     """
@@ -59,5 +97,41 @@ def test_db2fs_db2csv_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_tabl
     for table_name in mock_psql_table_names:
         # build local file path
         local_file_path = test_download_dir_psql.joinpath(table_name + ".csv")
+        # assert file exists
+        assert local_file_path.exists()
+
+def test_db2fs_db2json_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_table_names):
+    """
+        test db 2 csv extractions
+    """
+    # init class
+    db_ext = DatabaseExtractor(
+        connection_info=mock_psql_dsn,
+        download_dir_path=test_download_dir_psql
+    )
+    # run extraction to files
+    db_ext.db2other(file_type=".json")
+    # assert all files exist
+    for table_name in mock_psql_table_names:
+        # build local file path
+        local_file_path = test_download_dir_psql.joinpath(table_name + ".json")
+        # assert file exists
+        assert local_file_path.exists()
+
+def test_db2fs_db2parquet_psql(mock_psql_dsn, test_download_dir_psql, mock_psql_table_names):
+    """
+        test db 2 csv extractions
+    """
+    # init class
+    db_ext = DatabaseExtractor(
+        connection_info=mock_psql_dsn,
+        download_dir_path=test_download_dir_psql
+    )
+    # run extraction to files
+    db_ext.db2other(file_type=".parquet")
+    # assert all files exist
+    for table_name in mock_psql_table_names:
+        # build local file path
+        local_file_path = test_download_dir_psql.joinpath(table_name + ".parquet")
         # assert file exists
         assert local_file_path.exists()

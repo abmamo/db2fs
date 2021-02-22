@@ -82,7 +82,7 @@ class AzureStorageMiddleware:
             # exit
             return
 
-    def upload_container_file(self, container_name, file_path):
+    def upload_container_file(self, container_name, local_file_path, key=None, prefix=None):
         """
             upload file to an Azure Storage container
 
@@ -100,10 +100,16 @@ class AzureStorageMiddleware:
             # exit
             return
         try:
-            # get file name from file path
-            local_file_name = Path(file_path).name
+            # if key is not specified
+            if key is None:
+                # use filename as key
+                key = os.path.basename(local_file_path)
+            # if prefix is specified
+            if prefix is not None:
+                # update key
+                key = os.path.join(prefix, key)
             # init blob client
-            blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=local_file_name)
+            blob_client = self.blob_service_client.get_blob_client(container=container_name, blob=key)
             # read file
             with open(file_path, "rb") as upload_file:
                 # upload file
@@ -119,8 +125,17 @@ class AzureStorageMiddleware:
             # exit
             return
 
-    def upload_container_dir(self, bucket_name, local_dir_path):
-        pass
+    def upload_container_dir(self, bucket_name, local_dir_path, prefix=None):
+        # get all files in dir
+        all_files = glob.glob(os.path.join(local_dir_path, "*.*"))
+        # iterate through files and upload
+        for file_path in all_files:
+            # upload file
+            self.upload_container_file(
+                bucket_name=bucket_name,
+                local_file_path=file_path,
+                prefix=prefix
+            )
 
     def get_container_files(self, container_name, prefix=None):
         """

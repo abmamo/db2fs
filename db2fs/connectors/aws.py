@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 import json
 # os
 import os
+import glob
 # config logger
 logger = logging.getLogger(__name__)
 
@@ -125,8 +126,17 @@ class AWSS3Middleware:
         # upload file
         bucket.upload_file(local_file_path, bucket_name, key)
     
-    def upload_bucket_dir(self, bucket_name, local_dir_path):
-        pass
+    def upload_bucket_dir(self, bucket_name, local_dir_path, prefix=None):
+        # get all files in dir
+        all_files = glob.glob(os.path.join(local_dir_path, "*.*"))
+        # iterate through files and upload
+        for file_path in all_files:
+            # upload file
+            self.upload_bucket_file(
+                bucket_name=bucket_name,
+                local_file_path=file_path,
+                prefix=prefix
+            )
     
     def download_bucket_file(self, bucket_name, file_name, download_dir):
         """

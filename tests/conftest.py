@@ -63,6 +63,11 @@ def test_dir():
     # delete data dir after tests finish
     shutil.rmtree(str(test_dir))
 
+@pytest.fixture(scope="module")
+def test_database_metadata():
+    """test SQL / database metadata column representation"""
+    return [('col_1', 'REAL'), ('col_2', 'TEXT')]
+
 ### Postgres ###
 @pytest.fixture(scope="package")
 def test_populate_obj_psql():

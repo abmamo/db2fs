@@ -6,7 +6,7 @@ import pytest
 import psycopg2
 import pymysql
 # classes being tested
-from fs2db.connectors.rdb import without, RDBConnector, RDBMiddleware
+from db2fs.connectors.rdb import without, RDBConnector, RDBMiddleware
 
 
 def test_without_valid_key():

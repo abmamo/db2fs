@@ -5,7 +5,7 @@ import glob
 import shutil
 from pathlib import Path
 # import aws middleware
-from fs2db.connectors.aws import AWSS3Middleware
+from db2fs.connectors.aws import AWSS3Middleware
 
 @pytest.fixture(scope="module")
 def download_dir():

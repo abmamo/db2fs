@@ -5,7 +5,7 @@ import glob
 import shutil
 from pathlib import Path
 # import aws middleware
-from fs2db.connectors.gcp import GCPStorageMiddleware
+from db2fs.connectors.gcp import GCPStorageMiddleware
 
 @pytest.fixture(scope="module")
 def download_dir():

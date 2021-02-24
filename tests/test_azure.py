@@ -5,7 +5,7 @@ import glob
 import shutil
 from pathlib import Path
 # import aws middleware
-from fs2db.connectors.azure import AzureStorageMiddleware
+from db2fs.connectors.azure import AzureStorageMiddleware
 
 @pytest.fixture(scope="module")
 def download_dir():
